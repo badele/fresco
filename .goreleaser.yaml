@@ -1,0 +1,141 @@
+project_name: fresco
+
+before:
+  hooks:
+    # You may remove this if you don't use go modules.
+    - go mod tidy
+
+builds:
+  - id: "import"
+    main: ./cmd/import/import.go
+    binary: import
+    goos: [darwin, linux, windows]
+    goarch: [amd64, arm64]
+  
+  - id: "fresco"
+    main: ./cmd/fresco/fresco.go
+    binary: fresco
+    goos: [darwin, linux, windows]
+    goarch: [amd64, arm64]
+
+archives:
+  - format: tar.gz
+    # this name template makes the OS and Arch compatible with the results of uname.
+    name_template: >-
+      {{ .ProjectName }}_
+      {{- title .Os }}_
+      {{- if eq .Arch "amd64" }}x86_64
+      {{- else if eq .Arch "386" }}i386
+      {{- else }}{{ .Arch }}{{ end }}
+      {{- if .Arm }}v{{ .Arm }}{{ end }}
+    # use zip for windows archives
+    format_overrides:
+    - goos: windows
+      format: zip
+
+    files:
+      - README.md
+      - datasets/bands.fwf
+      
+checksum:
+  name_template: 'checksums.txt'
+snapshot:
+  name_template: "{{ incpatch .Version }}-next"
+changelog:
+  sort: asc
+  filters:
+    exclude:
+      - '^docs:'
+      - '^test:'
+
+##############################################################################
+# Docker image
+##############################################################################
+
+dockers:
+  - image_templates:
+    - "badele/{{.ProjectName}}:latest"
+    - "badele/{{.ProjectName}}:{{ .Major }}.{{ .Minor }}"
+
+##############################################################################
+# Packaging
+##############################################################################
+
+# nfpms:
+#   # note that this is an array of nfpm configs
+#   -
+#     # ID of the nfpm config, must be unique.
+#     #
+#     # Default: 'default'
+#     id: fresco
+
+#     # You can change the file name of the package.
+#     #
+#     # Default: '{{ .PackageName }}_{{ .Version }}_{{ .Os }}_{{ .Arch }}{{ with .Arm }}v{{ . }}{{ end }}{{ with .Mips }}_{{ . }}{{ end }}{{ if not (eq .Amd64 "v1") }}{{ .Amd64 }}{{ end }}'
+#     # Templates: allowed
+#     file_name_template: "{{ .ConventionalFileName }}"
+
+#     # Build IDs for the builds you want to create NFPM packages for.
+#     # Defaults empty, which means no filtering.
+#     builds:
+#       - fresco
+#       - import
+
+#     # Your app's vendor.
+#     vendor: badele
+
+#     # Your app's homepage.
+#     homepage: https://github.com/badele
+
+#     # Your app's maintainer (probably you).
+#     maintainer: Bruno Adelé <brunoadele@gmail.com>
+
+#     # Your app's description.
+#     description: |-
+#       A radio frequency database
+
+#     # Your app's license.
+#     license: GPL 3
+
+#     # Formats to be generated.
+#     formats:
+#       - apk
+#       - deb
+#       - rpm
+#       - termux.deb # Since: v1.11
+#       - archlinux  # Since: v1.13
+
+#     # Path that the binaries should be installed.
+#     # Default: '/usr/bin'
+#     bindir: /usr/bin
+
+#     # Version Epoch.
+#     # Default: extracted from `version` if it is semver compatible
+#     epoch: 2
+
+#     # Version Prerelease.
+#     # Default: extracted from `version` if it is semver compatible
+#     # prerelease: beta1
+
+#     # Version Metadata (previously deb.metadata).
+#     # Setting metadata might interfere with version comparisons depending on the
+#     # packager.
+#     #
+#     # Default: extracted from `version` if it is semver compatible
+#     version_metadata: git
+
+#     # Version Release.
+#     release: 1
+
+#     # Section.
+#     section: default
+
+#     # Priority.
+#     priority: extra
+
+#     # Makes a meta package - an empty package that contains only supporting
+#     # files and dependencies.
+#     # When set to `true`, the `builds` option is ignored.
+#     #
+#     # Default: false
+#     meta: true

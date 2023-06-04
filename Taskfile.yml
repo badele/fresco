@@ -1,0 +1,25 @@
+version: '3'
+
+tasks:
+  default: 
+    cmds: 
+      - task -l
+
+  clean:
+    desc: Remove builded binaries
+    cmds: 
+      - rm -rf dist
+
+  build:
+    desc: Build all cmd
+    cmds:
+      - |
+        command -v pass > /dev/null && export GITHUB_TOKEN=$(pass show home/bruno/github.com/token/goreleaser)
+        goreleaser build --snapshot --clean
+
+  release:
+    desc: Release new version
+    cmds:
+      - |
+        command -v pass > /dev/null && export GITHUB_TOKEN=$(pass show home/bruno/github.com/token/goreleaser)
+        goreleaser release --clean --snapshot
