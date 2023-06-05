@@ -10,6 +10,8 @@ export GITHUB_TOKEN=$(pass show home/bruno/github.com/token/goreleaser)
 task clean build release
 ```
 
+![fresco](docs/fresco.gif)
+
 **Bands source**:
 - [SDR++](https://github.com/AlexandreRouma/SDRPlusPlus/tree/master/root/res/bandplans)
 - [Gqrx](https://raw.githubusercontent.com/gqrx-sdr/gqrx/master/resources/bandplan.csv)
