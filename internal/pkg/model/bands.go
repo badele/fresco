@@ -29,6 +29,11 @@ type Band struct {
 	Type           string
 }
 
+func (band *Band) UUID() string {
+	uuid := fmt.Sprintf("%012d-%012d-%s-%s", band.LowerFrequency, band.UpperFrequency, band.Source, band.Type)
+	return uuid
+}
+
 func (band *Band) AndFiltered(filter string) bool {
 	selected := true
 
@@ -110,6 +115,27 @@ func (bands *Bands) Write(filename string) {
 	defer f.Close()
 
 	_ = fwencoder.MarshalWriter(f, bands)
+}
+
+func (bands *Bands) InsertNewValue(nbands *Bands) {
+	allKeys := make(map[string]bool)
+
+	// Search all uniq initial value
+	for _, band := range *bands {
+		uuid := band.UUID()
+		if _, value := allKeys[uuid]; !value {
+			allKeys[uuid] = true
+		}
+	}
+
+	// Add only new value
+	for _, band := range *nbands {
+		uuid := band.UUID()
+		if _, value := allKeys[uuid]; !value {
+			allKeys[uuid] = true
+			*bands = append(*bands, band)
+		}
+	}
 }
 
 // Sorting

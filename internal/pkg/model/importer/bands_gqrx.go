@@ -2,13 +2,11 @@ package importer
 
 import (
 	"encoding/csv"
+	"fresco/internal/pkg/model"
+	"fresco/internal/pkg/tools"
 	"io"
 	"strconv"
 	"strings"
-
-	"fresco/internal/pkg/model"
-
-	"fresco/internal/pkg/tools"
 )
 
 const gqrx_bands string = "https://raw.githubusercontent.com/gqrx-sdr/gqrx/master/resources/bandplan.csv"

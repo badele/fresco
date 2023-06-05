@@ -23,3 +23,8 @@ tasks:
       - |
         command -v pass > /dev/null && export GITHUB_TOKEN=$(pass show home/bruno/github.com/token/goreleaser)
         goreleaser release --clean --snapshot
+
+  run:
+    desc: run
+    cmds: 
+      - go run cmd/fresco/fresco.go
