@@ -13,10 +13,10 @@ type UBands struct {
 	*tview.Table
 
 	filter string
-	datas  model.Bands
+	Datas  *model.Bands
 }
 
-func NewBandsTable() *UBands {
+func NewBandsTable(bands *model.Bands) *UBands {
 	table := tview.NewTable()
 
 	table.SetSelectable(true, false)
@@ -26,12 +26,9 @@ func NewBandsTable() *UBands {
 	uibands := &UBands{
 		Table:  table,
 		filter: "",
-		datas:  model.Bands{},
+		Datas:  bands,
 	}
 	uibands.SetBorder(true)
-
-	uibands.datas = model.Bands{}
-	uibands.datas.Read("datasets/bands.fwf")
 
 	return uibands
 }
@@ -66,13 +63,7 @@ func (b *UBands) Refresh(filter string) {
 
 	var cell *tview.TableCell
 	idx := 0
-	for i, band := range b.datas {
-		// if filter != "" && !(tools.SelectContent(band.Name, "name", filter) &&
-		// 	tools.SelectContent(band.Source, "source", filter)) {
-		// 	// tools.SelectContent(band.Type, "type", filter)) {
-		// 	continue
-		// }
-
+	for i, band := range *b.Datas {
 		if filter != "" && !(band.IsFiltered(filter)) {
 			continue
 		}
