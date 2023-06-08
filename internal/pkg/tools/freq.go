@@ -19,21 +19,21 @@ const (
 const FreqValidationRegex = `^([0-9]+\.?[0-9]*) ?(Hz|KHz|MHz|GHz)?$`
 
 // Frequency is in Mgz
-func ConvertFrequencyToString(freq float64) string {
+func ConvertFrequencyToString(freq int64) string {
 	switch {
 	case freq > 1000000000:
-		return fmt.Sprintf("%.9f GHz", freq/float64(GHz))
+		return fmt.Sprintf("%.9f GHz", float64(freq)/float64(GHz))
 	case freq > 1000000:
-		return fmt.Sprintf("%.6f MHz", freq/float64(MHz))
+		return fmt.Sprintf("%.6f MHz", float64(freq)/float64(MHz))
 	case freq > 1000:
-		return fmt.Sprintf("%.3f KHz", freq/float64(KHz))
+		return fmt.Sprintf("%.3f KHz", float64(freq)/float64(KHz))
 	}
 
-	return fmt.Sprintf("%.f Hz", freq)
+	return fmt.Sprintf("%d Hz", freq)
 }
 
 // Frequency is in Mgz
-func ConvertStringToFrequency(ifreq string) (float64, error) {
+func ConvertStringToFrequency(ifreq string) (int64, error) {
 	r := regexp.MustCompile(FreqValidationRegex)
 	if !r.MatchString(ifreq) {
 		return 0, errors.New("Can't decode Frequency value")
@@ -55,5 +55,5 @@ func ConvertStringToFrequency(ifreq string) (float64, error) {
 		multiplier = GHz
 	}
 
-	return freq * float64(multiplier), nil
+	return int64(freq * float64(multiplier)), nil
 }
